@@ -1,13 +1,4 @@
-"""Screen TESS targets to find undiscovered exoplanet candidates.
 
-1. Queries NASA Exoplanet Archive for all known planet hosts and TOI candidates.
-2. Queries MAST (with local CSV fallback) for observed targets in a sector.
-3. Filters out all known targets to isolate unanalyzed "undiscovered" stars.
-4. Preprocesses light curves with noise filtering.
-5. Runs the trained 1D CNN model.
-6. Performs Box Least Squares (BLS) validation on CNN candidates.
-7. Saves results and generates diagnostic folded light curve plots.
-"""
 
 import os
 import csv
@@ -24,7 +15,6 @@ import sys
 from pipeline import process_single_target
 
 def fetch_known_systems():
-    """Fetch all confirmed host TIC IDs and TOI candidate TIC IDs to exclude."""
     print("Fetching known planet hosts and TOI candidates from NASA Exoplanet Archive...")
     excluded = set()
     
@@ -60,7 +50,6 @@ def fetch_known_systems():
     return excluded
 
 def fetch_mast_sector_targets(sector=21):
-    """Fetch observed TICs via MAST TAP sync HTTP query."""
     tics = []
     
     print(f"[1/4] Building MAST sync TAP query for Sector {sector}...")
@@ -103,7 +92,6 @@ def fetch_mast_sector_targets(sector=21):
 
 
 def run_bls_validation(time, flux, period_range=(0.5, 20.0)):
-    """Run Box Least Squares on candidate light curve."""
     bls = BoxLeastSquares(time, flux)
     periods = np.linspace(period_range[0], period_range[1], 1000)
     result = bls.power(periods, 0.05, 0.3)

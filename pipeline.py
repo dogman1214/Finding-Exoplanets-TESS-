@@ -3,22 +3,6 @@ import numpy as np
 from scipy.interpolate import interp1d
 
 def process_single_target(tic_id, sector_num=None, target_length=2000, max_noise=0.02, window_length=101):
-    """Process a single TIC ID.
-    
-    Parameters
-    ----------
-    tic_id : str
-        TIC identifier.
-    sector_num : int or None, optional
-        Specific TESS sector to search. If None, searches all available sectors.
-    target_length : int, optional
-        Length of the output standardized flux array.
-    max_noise : float, optional
-        Maximum allowed standard deviation of the detrended flux. Targets exceeding
-        this will be rejected as too noisy. Defaults to 0.02 (2% scatter).
-    window_length : int, optional
-        The Savitzky-Golay filter window size for detrending/flattening.
-    """
     try:
         print(f"Connecting to NASA/MAST servers to fetch TIC {tic_id} (Sector {sector_num})...")
         

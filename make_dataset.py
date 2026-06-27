@@ -3,17 +3,6 @@ import numpy as np
 from pipeline import process_single_target
 
 def compile_dataset_from_csv(input_csv_path, output_matrix_path, tic_column='tic'):
-    """Compile dataset using specified TIC column name.
-
-    Parameters
-    ----------
-    input_csv_path : str
-        Path to the CSV containing TIC IDs and sector numbers.
-    output_matrix_path : str
-        Path where the resulting NumPy array will be saved.
-    tc_column : str, optional
-        Name of the column in the CSV that contains the TIC ID. Defaults to 'tic'.
-    """
     matrix_rows = []
 
     print(f"Opening data catalog source: {input_csv_path}")

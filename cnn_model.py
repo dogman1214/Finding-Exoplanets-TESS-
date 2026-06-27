@@ -17,37 +17,31 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def create_1d_cnn_model(input_length=2000):
-    '''Create a 1D CNN model for exoplanet transit detection'''
-    
     model = models.Sequential([
-        # First convolutional block
         layers.Conv1D(16, 7, activation='relu', input_shape=(input_length, 1),
-                      kernel_regularizer=tf.keras.regularizers.l2(1e-4)),
+        kernel_regularizer=tf.keras.regularizers.l2(1e-4)),
         layers.BatchNormalization(),
         layers.MaxPooling1D(3),
         layers.Dropout(0.5),
         
-        # Second convolutional block
         layers.Conv1D(32, 5, activation='relu',
-                      kernel_regularizer=tf.keras.regularizers.l2(1e-4)),
+        kernel_regularizer=tf.keras.regularizers.l2(1e-4)),
         layers.BatchNormalization(),
         layers.MaxPooling1D(3),
         layers.Dropout(0.5),
         
-        # Third convolutional block
         layers.Conv1D(64, 3, activation='relu',
-                      kernel_regularizer=tf.keras.regularizers.l2(1e-4)),
+        kernel_regularizer=tf.keras.regularizers.l2(1e-4)),
         layers.BatchNormalization(),
         layers.MaxPooling1D(2),
         layers.Dropout(0.5),
         
-        # Flatten and dense layers
         layers.Flatten(),
         layers.Dense(64, activation='relu',
-                     kernel_regularizer=tf.keras.regularizers.l2(1e-4)),
+        kernel_regularizer=tf.keras.regularizers.l2(1e-4)),
         layers.BatchNormalization(),
         layers.Dropout(0.5),
-        layers.Dense(1, activation='sigmoid')  # Binary classification: transit or not
+        layers.Dense(1, activation='sigmoid')
     ])
     
     model.compile(
@@ -59,7 +53,6 @@ def create_1d_cnn_model(input_length=2000):
     return model
 
 def generate_synthetic_synthetic_transits(n_samples=1000, length=2000):
-    '''Generate synthetic transit signals for training data'''
     logger.info(f"Generating {n_samples} synthetic transit samples...")
     
     X = np.random.normal(0, 0.1, (n_samples, length, 1))
@@ -91,7 +84,6 @@ def generate_synthetic_synthetic_transits(n_samples=1000, length=2000):
     return X, y
 
 def load_real_dataset(pos_path='confirmed_positive_vectors.npy', neg_path='negative_vectors.npy'):
-    """Load real positive and negative datasets."""
     logger.info(f"Loading real dataset from {pos_path} and {neg_path}")
     pos = np.load(pos_path)
     neg = np.load(neg_path)

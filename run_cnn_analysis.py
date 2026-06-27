@@ -4,7 +4,6 @@ from pipeline import process_single_target
 import matplotlib.pyplot as plt
 
 def load_model_and_predict(model_path='exoplanet_cnn_model.h5'):
-    '''Load trained model and make predictions on TESS data'''
     
     model = tf.keras.models.load_model(model_path)
     print(f"Loaded model from {model_path}")
@@ -12,7 +11,6 @@ def load_model_and_predict(model_path='exoplanet_cnn_model.h5'):
     return model
 
 def analyze_target_with_cnn(tic_id, sector_num, model):
-    '''Analyze a single TESS target using the trained CNN model'''
     
     print(f"Processing TIC {tic_id} (Sector {sector_num})...")
     light_curve = process_single_target(tic_id, sector_num)
@@ -34,7 +32,6 @@ def analyze_target_with_cnn(tic_id, sector_num, model):
     }
 
 def analyze_catalog_from_csv(csv_path, model_path='exoplanet_cnn_model.h5', output_csv='cnn_results.csv'):
-    '''Analyze all targets in a CSV file using the CNN model'''
     
     model = load_model_and_predict(model_path)
     

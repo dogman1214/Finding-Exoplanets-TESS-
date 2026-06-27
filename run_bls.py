@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import csv
 
 def run_box_least_squares(time, flux, period_range=(0.5, 20.0), min_duration=0.1, max_duration=0.5):
-    '''Run Box Least Squares algorithm on normalized light curve'''
     
     bls = BoxLeastSquares(time, flux)
     
@@ -31,7 +30,6 @@ def run_box_least_squares(time, flux, period_range=(0.5, 20.0), min_duration=0.1
     return candidates, result
 
 def analyze_cnn_candidates(cnn_results_csv='cnn_results.csv', targets_csv='targets.csv', output_csv='bls_results.csv'):
-    '''Run BLS on high-confidence CNN candidates'''
     
     import csv
     cnn_results = []
@@ -103,7 +101,6 @@ def analyze_cnn_candidates(cnn_results_csv='cnn_results.csv', targets_csv='targe
     return bls_results
 
 def process_single_target(tic_id, sector_num):
-    """Import process_single_target from pipeline.py"""
     import lightkurve as lk
     import numpy as np
     from scipy.interpolate import interp1d
