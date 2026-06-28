@@ -11,16 +11,16 @@ from pipeline import process_single_target
 
 def load_unique_tics(csv_path):
     """Return a list of unique TIC IDs from the CSV.
-    The CSV is expected to have a column named 'tic_id'.
+    The CSV is expected to have a column named 'TIC'.
     """
     tics = set()
     with open(csv_path, mode='r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row in reader:
-            tics.add(row['tic_id'].strip())
+            tics.add(row['TIC'].strip())
     return list(tics)
 
-def compile_confirmed_dataset(csv_path='confirmed_exoplanets.csv', output_path='confirmed_positive_vectors.npy', max_samples=15):
+def compile_confirmed_dataset(csv_path='toi-catalog_2026-06-23.csv', output_path='confirmed_positive_vectors.npy', max_samples=15):
     tics = load_unique_tics(csv_path)
     vectors = []
     downloaded = 0
