@@ -1,131 +1,102 @@
 
----
+# **TESS Exoplanet Transit Detection Pipeline (1D CNN)**
 
-# **TESS Exoplanet CNN Pipeline**
-
-A fully reproducible machine‑learning pipeline for detecting exoplanet transit signals in **real TESS light curves**.  
-The system trains a **1D Convolutional Neural Network** on confirmed exoplanet hosts and non‑planet stars, then applies the model to unvetted TESS targets. High‑confidence predictions are validated using **Box Least Squares (BLS)** period searches.
-
-This repository contains all scripts required to:
-
-- build training datasets from NASA archives  
-- train a real‑data CNN  
-- scan new TESS sectors  
-- run BLS validation  
-- generate candidate plots and outputs  
+A reproducible machine‑learning pipeline for identifying exoplanet transit signatures in *Transiting Exoplanet Survey Satellite* (TESS) light curves. The system integrates real confirmed exoplanet hosts, physics‑based synthetic transit models (BATMAN), and non‑planet control stars to train a 1D convolutional neural network (CNN) capable of scanning new TESS sectors for previously unreported candidates.
 
 ---
 
-## **Pipeline Overview**
+## **1. Pipeline Architecture**
 
-1. **Confirmed Exoplanet Retrieval**  
-   Downloads all TESS‑observed confirmed exoplanet hosts from the NASA Exoplanet Archive (TAP).
+The workflow is organized into four primary stages:
 
-2. **Negative Sample Construction**  
-   Builds a dataset of stars with no known planets or TOIs to teach the model non‑transit behavior.
+1. **Acquisition of Confirmed Exoplanet Hosts**  
+   Retrieves all TESS‑observed confirmed planets from the NASA Exoplanet Archive (TTAP).  
+   **Output:** `confirmed_exoplanets.csv`
 
-3. **1D CNN Training**  
-   Trains on real PDCSAP light curves to learn authentic transit morphology.
+2. **Dataset Construction**  
+   - **Real positives:**  
+     `generate_confirmed_dataset.py` → `confirmed_positive_vectors.npy`  
+   - **Synthetic positives (BATMAN):**  
+     `generate_synthetic_dataset.py` → `synthetic_positive_vectors.npy`  
+   - **Negative controls:**  
+     `generate_negative_dataset.py` → `negative_vectors.npy`
 
-4. **Sector‑Wide Candidate Search**  
-   Queries MAST for all stars in a chosen sector, removes known hosts/TOIs, and evaluates remaining targets.
+3. **Model Training**  
+   Trains a 1D CNN on combined real, synthetic, and negative samples.  
+   **Output:** `exoplanet_cnn_real.h5`
 
-5. **BLS Validation**  
-   Runs BLS on any star with CNN confidence ≥0.70 to check for periodic transit‑like dips.
-
----
-
-## **Architecture Diagram**
-
-```
-NASA Exoplanet Archive (TAP)
-      ↓
-download_confirmed_exoplanets.py → confirmed_exoplanets.csv
-      ↓
-generate_confirmed_dataset.py ───→ confirmed_positive_vectors.npy
-generate_negative_dataset.py ────→ negative_vectors.npy
-      ↓
-cnn_model.py (train CNN) ───────→ exoplanet_cnn_real.h5
-      ↓
-find_undiscovered_candidates.py  ← MAST sector query
-      ↓
-(Filter known hosts & TOIs)
-      ↓
-(CNN prediction)
-      ↓
-(BLS validation) ─────────────→ bls_results.csv + folded_plots/
-```
+4. **Sector‑Level Candidate Search**  
+   Applies the trained model to new TESS sectors, filters out known hosts/TOIs, and performs BLS validation on high‑confidence predictions.  
+   **Outputs:** `bls_results.csv`, `folded_plots/`
 
 ---
 
-## **Environment Setup**
+## **2. Environment Setup**
 
-Activate the included virtual environment:
+Activate the project environment:
 
 ```bash
 tf_env\Scripts\activate
 ```
 
 ### **Dependencies**
-- `lightkurve` — TESS light curve access  
-- `tensorflow` — CNN model  
-- `astropy` — BLS period search  
-- `pyvo` — TAP queries  
-- `numpy`, `scipy`, `pandas`, `sklearn`, `matplotlib`
+- `lightkurve` — TESS light curve access and preprocessing  
+- `tensorflow` — 1D CNN model training  
+- `astropy` — Box Least Squares (BLS) period search  
+- `pyvo` — NASA Exoplanet Archive TAP queries  
+- `batman-package` — analytic transit model generation  
+- `numpy`, `pandas`, `matplotlib`
+
+Install BATMAN:
+
+```bash
+pip install batman-package
+```
 
 ---
 
-## **Noise Handling & Preprocessing**
+## **3. Usage Guide**
 
-The pipeline applies several preprocessing steps to ensure clean, usable light curves:
-
-- **PDCSAP flux** for systematics‑corrected data  
-- **Asymmetric outlier removal** (preserves dips, removes flares)  
-- **Savitzky–Golay detrending** for long‑term variability  
-- **Scatter thresholding** to exclude high‑noise targets  
-
----
-
-## **Usage**
-
-### **1. Download Confirmed Exoplanets**
+### **Step 1 — Download Confirmed Exoplanets**
 ```bash
 tf_env\Scripts\python.exe download_confirmed_exoplanets.py
 ```
 
-### **2. Generate Training Datasets**
-**Positive samples:**
+### **Step 2 — Generate Training Datasets**
 ```bash
 tf_env\Scripts\python.exe generate_confirmed_dataset.py
-```
-
-**Negative samples:**
-```bash
+tf_env\Scripts\python.exe generate_synthetic_dataset.py
 tf_env\Scripts\python.exe generate_negative_dataset.py
 ```
 
-### **3. Train the CNN**
+### **Step 3 — Train the CNN**
 ```bash
 tf_env\Scripts\python.exe cnn_model.py
 ```
 
-Outputs:
-- `exoplanet_cnn_real.h5`  
-- `training_history_real.png`
+Produces:  
+- `exoplanet_cnn_real.h5` (trained model)
 
-### **4. Search for New Candidates**
+### **Step 4 — Scan New TESS Sectors**
 ```bash
 tf_env\Scripts\python.exe find_undiscovered_candidates.py
 ```
 
-This script:
-- retrieves known hosts/TOIs  
-- queries all stars in the selected sector  
-- filters known objects  
-- downloads + preprocesses light curves  
-- runs CNN predictions  
-- performs BLS validation  
-- saves results + folded transit plots  
+Produces:  
+- `bls_results.csv` (validated candidates)  
+- `folded_plots/` (phase‑folded BLS diagnostics)
+
+---
+
+## **4. Outputs**
+
+| Component | Description |
+|----------|-------------|
+| `exoplanet_cnn_real.h5` | Final trained CNN model |
+| `bls_results.csv` | BLS‑validated candidate periods, SNR, transit depth |
+| `folded_plots/` | Diagnostic plots for each candidate |
+| `confirmed_exoplanets.csv` | TAP‑retrieved confirmed host metadata |
+| `*_vectors.npy` | Preprocessed training vectors |
 
 ---
 
