@@ -9,6 +9,10 @@ It creates realistic light curves with:
 - Instrumental offsets
 
 then saves as an npy file so our CNN can ingest it
+
+
+
+Also have to use python 3.11
 """
 
 
@@ -62,7 +66,7 @@ def add_stellar_variability(flux, t, variability_amplitude = 0.001, variability_
 
     return flux_with_variability
 
-def add_gaussian_noise(flux, noise_level = 0.0005)
+def add_gaussian_noise(flux, noise_level = 0.0005):
     """
     does what it says
     are you serious
