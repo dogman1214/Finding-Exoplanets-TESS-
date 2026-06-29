@@ -150,9 +150,9 @@ Applies model to Sector 21, filters known TICs, and runs BLS validation on CNN c
 ## **6. Reproducibility**
 
 - Random seed: `42` for train/test split in `cnn_model.py`
-- Hardware: NVIDIA RTX 3090 (GPU-accelerated training)
+- Hardware: NVIDIA RTX 4080 (GPU-accelerated training)
 - Software: Python 3.11, TensorFlow 2.12, BATMAN 2.4.8, astropy 5.3
-- Training time: ~4 hours on GPU
+- Training time: TBD
 - Results are deterministic with fixed seeds and identical environment
 - All data generation and training scripts include explicit seeding
 
