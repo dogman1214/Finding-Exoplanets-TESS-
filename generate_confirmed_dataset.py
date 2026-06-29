@@ -67,4 +67,4 @@ def compile_confirmed_dataset(csv_path='toi-catalog_2026-06-23.csv', output_path
         print("No light curves were successfully retrieved.")
 
 if __name__ == "__main__":
-    compile_confirmed_dataset(max_samples=1000)
+    compile_confirmed_dataset()

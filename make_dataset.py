@@ -12,7 +12,21 @@ def compile_dataset_from_csv(input_csv_path, output_matrix_path, tic_column='tic
 
         for row in reader:
             tic = row[tic_column].strip()
-            sector = int(row['sector'].strip()) if 'sector' in row else None
+            # Handle both 'sector' and 'Sectors' column names
+            sector_str = row.get('sector', row.get('Sectors', ''))
+            sector = None
+            if sector_str and sector_str.strip():
+                try:
+                    # Handle both single sector and list of sectors
+                    if sector_str.startswith('['):
+                        # Parse list format like "[28, 68]"
+                        sector_list = sector_str.strip('[]').split(',')
+                        # Use first sector for consistency
+                        sector = int(sector_list[0].strip())
+                    else:
+                        sector = int(sector_str.strip())
+                except ValueError:
+                    pass  # Keep sector as None if parsing fails
 
             if sector is None:
                 vector = process_single_target(tic_id=tic, sector_num=None)
@@ -32,7 +46,9 @@ def compile_dataset_from_csv(input_csv_path, output_matrix_path, tic_column='tic
         print("\nWarning: No valid arrays were collected from the input file source.")
 
 if __name__ == "__main__":
+    # Use TOI catalog as source for positive examples
     compile_dataset_from_csv(
-        input_csv_path="targets.csv",
-        output_matrix_path="positive_vectors.npy"
+        input_csv_path="toi-catalog_2026-06-23.csv",
+        output_matrix_path="positive_vectors.npy",
+        tic_column='TIC'
     )

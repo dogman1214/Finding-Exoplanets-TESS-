@@ -57,3 +57,7 @@ def download_confirmed_exoplanets(output_path='confirmed_exoplanets.csv'):
 
 if __name__ == "__main__":
     download_confirmed_exoplanets()
+"""
+hello
+aim for at least 10k to 20k samples generally.
+"""

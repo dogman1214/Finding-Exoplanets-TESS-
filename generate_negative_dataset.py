@@ -212,4 +212,4 @@ def compile_negative_dataset(output_path='negative_vectors.npy', max_samples=Non
         sys.exit(1)
 
 if __name__ == "__main__":
-    compile_negative_dataset(max_samples=1000)
+    compile_negative_dataset()
