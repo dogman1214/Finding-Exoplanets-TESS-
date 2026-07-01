@@ -108,10 +108,8 @@ if __name__ == "__main__":
         model_filename = 'exoplanet_cnn_real.h5'
         history_plot_filename = 'training_history_real.png'
     else:
-        logger.info("Real dataset files not found. Generating synthetic transit dataset...")
-        X, y = generate_synthetic_transits(2000)
-        model_filename = 'exoplanet_cnn_model.h5'
-        history_plot_filename = 'training_history.png'
+        logger.info("Real dataset files not found.")
+        sys.exit(0)
         
     logger.info(f"Dataset shape: {X.shape}, Labels shape: {y.shape}")
     logger.info(f"Positive samples: {np.sum(y == 1)}, Negative samples: {np.sum(y == 0)}")
@@ -189,3 +187,5 @@ if __name__ == "__main__":
     plt.tight_layout()
     plt.savefig(history_plot_filename)
     logger.info(f"Training history saved as '{history_plot_filename}'")
+
+    
